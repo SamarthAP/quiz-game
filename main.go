@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 )
 
 type Question struct {
@@ -21,6 +22,7 @@ func main() {
 		"csv",
 		"quiz.csv",
 		"a csv file with the format question,answer (default: quiz.csv)")
+	timePtr := flag.Int("time-limit", 30, "the time limit (in seconds) to finish the whole quiz")
 	flag.Parse()
 
 	csvFile, err := os.Open(*filePtr)
@@ -42,14 +44,29 @@ func main() {
 		})
 	}
 	reader := bufio.NewReader(os.Stdin)
-	var score [2]int // correct, total
-	for _, question := range questionList {
-		fmt.Println(question.question)
-		input, _ := reader.ReadString('\n')
-		if strings.TrimRight(input, "\n") == question.answer {
-			score[0] = score[0] + 1
+	var score int
+	timer := time.NewTimer(time.Duration(*timePtr) * time.Second)
+
+questionsLoop:
+	for index, question := range questionList {
+		fmt.Printf("Problem #%d: %s\n", index+1, question.question)
+
+		firstChan := make(chan string)
+
+		go func() {
+			input, _ := reader.ReadString('\n')
+			firstChan <- strings.TrimRight(input, "\n")
+		}()
+
+		select {
+		case <-timer.C:
+			break questionsLoop
+		case in := <-firstChan:
+			if in == question.answer {
+				score++
+			}
 		}
-		score[1] = score[1] + 1
+
 	}
-	fmt.Println("Your score is:", score[0], "/", score[1])
+	fmt.Println("Your score is:", score, "/", len(questionList))
 }
