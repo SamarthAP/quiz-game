@@ -8,7 +8,9 @@ $ go build .
 $ ./quiz-game -h
 Usage of ./quiz-game:
   -csv string
-        a csv file with the format question,answer (default "quiz.csv")
+        a csv file with the format question,answer (default: quiz.csv) (default "quiz.csv")
+  -time-limit int
+        the time limit (in seconds) to finish the whole quiz (default 30)
 ```
 
 ## Run
