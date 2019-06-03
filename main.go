@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -16,7 +17,13 @@ type Question struct {
 }
 
 func main() {
-	csvFile, err := os.Open("quiz.csv")
+	filePtr := flag.String(
+		"csv",
+		"quiz.csv",
+		"a csv file with the format question,answer (default: quiz.csv)")
+	flag.Parse()
+
+	csvFile, err := os.Open(*filePtr)
 	if err != nil {
 		log.Fatal(err)
 	}
