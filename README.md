@@ -4,8 +4,11 @@ A Go program that will read in a quiz from a CSV file and ask questions that the
 
 ## Show flags
 ```
-go build .
-./quiz-game -h
+$ go build .
+$ ./quiz-game -h
+Usage of ./quiz-game:
+  -csv string
+        a csv file with the format question,answer (default "quiz.csv")
 ```
 
 ## Run
